@@ -14,10 +14,6 @@ db = mongoose.connection;
 
 db.on('error', (e) => console.log(e));
 db.once('open', () => {
-    db.collection('users').find().toArray((err, result) => {
-        console.log(result);
-    });
-
     https.createServer({
         key: fs.readFileSync('server.key'),
         cert: fs.readFileSync('server.cert')
@@ -25,13 +21,16 @@ db.once('open', () => {
         console.log('listening on 3000')
     });
 
+    app.set('views', __dirname + '/src/views');
     app.set('view engine', 'ejs');
+
     app.use(bodyParser.urlencoded({extended: true}));
     app.use(bodyParser.json());
     app.use(express.static('public'));
     app.use(function (req, res, next) {
         res.header('Access-Control-Allow-Origin', '*');
         res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+        res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
         next();
     });
 
